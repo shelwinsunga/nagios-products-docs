@@ -1,5 +1,5 @@
 ---
-title: React Hooks for Data Fetching
+title: Nagios Documentation Prototype
 ---
 
 import Callout from 'nextra-theme-docs/callout'
@@ -9,76 +9,69 @@ import Bleed from 'nextra-theme-docs/bleed'
 {
 // wrapped with {} to mark it as javascript so mdx will not put it under a p tag
 }
-{<h1 className="text-center font-extrabold md:text-5xl mt-8">SWR</h1>}
+{<h1 className="text-center font-extrabold md:text-5xl mt-8">Nagios Docs</h1>}
 
 <Bleed><Features/></Bleed>
 
-The name “SWR” is derived from `stale-while-revalidate`, a HTTP cache invalidation strategy popularized by [HTTP RFC 5861](https://tools.ietf.org/html/rfc5861).
-SWR is a strategy to first return the data from cache (stale), then send the fetch request (revalidate), and finally come with the up-to-date data.
+This is a prototype for the new Nagios documentation site. It is built with [Nextra](https://nextra.site) and  [Next.js](nextjs.org).
 
-<Callout emoji="✅">
-  With SWR, components will get a stream of data updates <strong>constantly</strong> and <strong>automatically</strong>.<br/>
-  And the UI will be always <strong>fast</strong> and <strong>reactive</strong>.
-</Callout>
-
-<div className="mt-16 mb-20 text-center">
-  [Get Started](/docs/getting-started) · [Examples](/examples/basic) · [Blog](/blog/swr-v1) · [GitHub Repository](https://github.com/vercel/swr)
-</div>
 
 ## Overview
 
-```jsx
-import useSWR from 'swr'
+I scraped the public facing Knowledge base with `pandoc` and `beautifulsoup` and converted it to markdown. 
 
-function Profile() {
-  const { data, error, isLoading } = useSWR('/api/user', fetcher)
+We start by finding all the links to the articles on the main page. Then we loop through each link and scrape the article. 
 
-  if (error) return <div>failed to load</div>
-  if (isLoading) return <div>loading...</div>
-  return <div>hello {data.name}!</div>
-}
+
+```python 
+ def get_articles():
+        # get the main page of the knowledge base
+        r = requests.get(base_url)
+        soup = BeautifulSoup(r.content, 'html.parser')
+        # get the href from the anchor tag inside the div and push it to a link array
+        # include base url in links
+        links = [link.find('a').get('href') for link in soup.find_all('div', class_='article')]
+        return links
 ```
 
-In this example, the `useSWR` hook accepts a `key` string and a `fetcher` function. `key` is a unique identifier of the data (normally the API URL)
-and will be passed to `fetcher`. `fetcher` can be any asynchronous function which returns the data, you can use the native fetch or tools like Axios.
+Next, we get the title of the article and the content.
 
-The hook returns 2 values: `data` and `error`, based on the status of the request.
+
+```python
+def save_markdown(links):
+        for link in links:
+            r = requests.get(link)
+            soup = BeautifulSoup(r.content, 'html.parser')
+            title = soup.select('.article-title')[0].get_text()
+            content = soup.find("div", {"id": "ARTICLECONTENT"}).find("article").prettify()
+```
+
+And after a ton of formatting, we get the markdown files. 
+
+```python
+content = pypandoc.convert_text(content, 'md', format='html', extra_args=['-t', 'gfm-raw_html', '--wrap=none'])
+content = format_markdown(content)
+content = f'---\ntitle: "{title}"\nfull: true\n---\n\n# {title}\n\n{content}'
+with open(f'md/{Filetitle}.md', 'w', encoding='utf-8') as f:
+  f.write(content)
+```
 
 ## Features
 
-With just one single line of code, you can simplify the logic of data fetching in your project, and also have all these amazing features out-of-the-box:
-
-- **Fast**, **lightweight** and **reusable** data fetching
-- Built-in **cache** and request deduplication
+Here's the improvements from the original KB
+- **Fast** and **lightweight**
 - **Real-time** experience
-- Transport and protocol agnostic
-- SSR / ISR / SSG support
-- TypeScript ready
-- React Native
+- SSG, SSR, and ISR support
+- Blazing fast full text search
+- **Dark mode** support
+- Advanced syntax highlighting with [Shiki](https://shiki.matsu.io/)
+- Hybrid rendering, next generation 
 
-SWR has you covered in all aspects of speed, correctness, and stability to help you build better experiences:
+Some things that still need fixing:
+- Need to scrape more of the KB
+- Need to fix any formatting errors
+- Broken links
+- Image generation
+- Etc 
 
-- Fast page navigation
-- Polling on interval
-- Data dependency
-- Revalidation on focus
-- Revalidation on network recovery
-- Local mutation (Optimistic UI)
-- Smart error retry
-- Pagination and scroll position recovery
-- React Suspense
 
-And a lot [more](/docs/getting-started).
-
-## Community
-
-<p className="flex h-6">
-  <img alt="stars" src="https://badgen.net/github/stars/vercel/swr" className="inline-block mr-2"/>
-  <img alt="downloads" src="https://badgen.net/npm/dt/swr" className="inline-block mr-2"/>
-  <img alt="license" src="https://badgen.net/npm/license/swr" className="inline-block mr-2"/>
-</p>
-
-SWR is created by the same team behind [Next.js](https://nextjs.org), the React framework.
-Follow [@vercel](https://twitter.com/vercel) on Twitter for future project updates.
-
-Feel free to join the [discussions on GitHub](https://github.com/vercel/swr/discussions)!
