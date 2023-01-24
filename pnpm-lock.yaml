@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@reach/skip-nav': ^0.16.0
   autoprefixer: ^10.4.2
+  cobe: ^0.6.3
   focus-visible: ^5.1.0
   intersection-observer: ^0.10.0
   markdown-to-jsx: ^6.11.4
@@ -17,6 +18,7 @@ specifiers:
 
 dependencies:
   '@reach/skip-nav': 0.16.0_sfoxds7t5ydpegc3knd667wn6m
+  cobe: 0.6.3
   focus-visible: 5.2.0
   intersection-observer: 0.10.0
   markdown-to-jsx: 6.11.4_react@17.0.2
@@ -678,6 +680,12 @@ packages:
     dependencies:
       arch: 2.2.0
       execa: 0.8.0
+    dev: false
+
+  /cobe/0.6.3:
+    resolution: {integrity: sha512-WHr7X4o1ym94GZ96h7b1pNemZJacbOzd02dZtnVwuC4oWBaLg96PBmp2rIS1SAhUDhhC/QyS9WEqkpZIs/ZBTg==}
+    dependencies:
+      phenomenon: 1.6.0
     dev: false
 
   /color-convert/1.9.3:
@@ -1903,6 +1911,10 @@ packages:
     dependencies:
       estree-walker: 3.0.1
       is-reference: 3.0.0
+    dev: false
+
+  /phenomenon/1.6.0:
+    resolution: {integrity: sha512-7h9/fjPD3qNlgggzm88cY58l9sudZ6Ey+UmZsizfhtawO6E3srZQXywaNm2lBwT72TbpHYRPy7ytIHeBUD/G0A==}
     dev: false
 
   /picocolors/1.0.0:

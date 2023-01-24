@@ -4,19 +4,12 @@
     "type": "page",
     "hidden": true
   },
-  "docs": {
-    "title": "Docs",
+  "core": {
+    "title": "Nagios Core",
     "type": "page"
   },
-  "examples": {
-    "title": "Examples",
+  "xi": {
+    "title": "Nagios XI",
     "type": "page"
-  },
-  "blog": {
-    "title": "Blog",
-    "type": "page",
-    "theme": {
-      "sidebar": false
-    }
   }
 }

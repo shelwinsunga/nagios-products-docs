@@ -1,0 +1,29 @@
+---
+title: "Installation errors on customized corporate builds of CentOS or RHEL"
+full: true
+---
+
+# Installation errors on customized corporate builds of CentOS or RHEL
+
+## Overview
+
+In larger enterprises, a "standard build" of CentOS or RHEL is required based on internal policies. These often differ from a clean minimal install of the OS as per our requirements.
+
+Depending on the policies implemented in the build process, the Nagios application may not be able to successfully install.
+
+Examples of known problems:
+
+- There have been modification to the umask on the machine
+- nagios or other user account is not allowed to be used
+- nagios or other user account is created ahead of the installation
+- sudoers file is overwritten periodically by automated processes
+
+## Explanation
+
+In such circumstances we can assist in identifying the problem to get the product working in your environment however from this point on support will be limited due to the customizations.
+
+## Final Thoughts
+
+For any support related questions please visit the [Nagios Support Forums](http://support.nagios.com/forum/) at:
+
+[http://support.nagios.com/forum/](http://support.nagios.com/forum/)

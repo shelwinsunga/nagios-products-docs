@@ -1,0 +1,122 @@
+---
+title: "Restoring Default Configuration"
+full: true
+---
+
+# Restoring Default Configuration
+
+## Overview
+
+This guide explains how to restore the monitoring configuration to the defaults as shipped with XI. You may want to perform this if you've somehow messed up your configurations irreparably, or simply want to reset a test system.
+
+Warning
+
+This is a destructive process and your existing monitoring configuration will be lost after performing this action.
+
+## Restoring Default Configuration
+
+Open an SSH or console session to your Nagios XI server and execute the following:
+```
+cd /usr/local/nagiosxi/scripts/
+./restore_defaults.sh
+```
+The following output is produced:
+```
+URL: http://localhost/nagiosxi/includes/components/ccm/
+CMDLINE
+/usr/bin/wget --save-cookies nagiosql.cookies --keep-session-cookies http://localhost/nagiosxi/includes/components/ccm/ --no-check-certificate --post-data 'submit=Login&hidelog=true&loginSubmitted=true&username=nagiosxi&password=n@gweb' -O nagiosql.login--2016-01-27 10:38:12--  http://localhost/nagiosxi/includes/components/ccm/
+Resolving localhost... ::1, 127.0.0.1
+Connecting to localhost|::1|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: unspecified [text/html]
+Saving to: `nagiosql.login'
+
+    [ =                                                                        ] 33,954      --.-K/s   in 0.01s   
+
+2016-01-27 10:38:12 (2.95 MB/s) - `nagiosql.login' saved [33954]
+
+LOGIN SUCCESSFUL!
+IMPORTING CONFIG FILES...URL: http://localhost/nagiosxi/includes/components/ccm/
+Array
+(
+)
+RESETTING PERMS
+URL: http://localhost/nagiosxi/includes/components/ccm/
+CMDLINE
+/usr/bin/wget --save-cookies nagiosql.cookies --keep-session-cookies http://localhost/nagiosxi/includes/components/ccm/ --no-check-certificate --post-data 'submit=Login&hidelog=true&loginSubmitted=true&username=nagiosxi&password=n@gweb' -O nagiosql.login--2016-01-27 10:38:12--  http://localhost/nagiosxi/includes/components/ccm/
+Resolving localhost... ::1, 127.0.0.1
+Connecting to localhost|::1|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: unspecified [text/html]
+Saving to: `nagiosql.login'
+
+    [ =                                                                        ] 33,954      --.-K/s   in 0.01s   
+
+2016-01-27 10:38:12 (3.10 MB/s) - `nagiosql.login' saved [33954]
+
+LOGIN SUCCESSFUL!
+URL: http://localhost/nagiosxi/includes/components/ccm/
+CMDLINE:
+/usr/bin/wget --load-cookies=nagiosql.cookies http://localhost/nagiosxi/includes/components/ccm/ --no-check-certificate --post-data 'cmd=apply&type=writeConfig' -O nagiosql.export.monitoring
+--2016-01-27 10:38:12--  http://localhost/nagiosxi/includes/components/ccm/
+Resolving localhost... ::1, 127.0.0.1
+Connecting to localhost|::1|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: unspecified [text/html]
+Saving to: `nagiosql.export.monitoring'
+
+    [ =                                                                        ] 15,226      --.-K/s   in 0.1s    
+
+2016-01-27 10:38:12 (101 KB/s) - `nagiosql.export.monitoring' saved [15226]
+
+WRITE CONFIGS SUCCESSFUL!
+OUTPUT: 
+Nagios Core 4.1.1
+Copyright (c) 2009-present Nagios Core Development Team and Community Contributors
+Copyright (c) 1999-2009 Ethan Galstad
+Last Modified: 08-19-2015
+License: GPL
+
+Website: https://www.nagios.org
+Reading configuration data...
+   Read main config file okay...
+   Read object config files okay...
+
+Running pre-flight check on configuration data...
+
+Checking objects...
+    Checked 8 services.
+    Checked 1 hosts.
+    Checked 1 host groups.
+    Checked 0 service groups.
+    Checked 2 contacts.
+    Checked 2 contact groups.
+    Checked 109 commands.
+    Checked 7 time periods.
+    Checked 0 host escalations.
+    Checked 0 service escalations.
+Checking for circular paths...
+    Checked 1 hosts
+    Checked 0 service dependencies
+    Checked 0 host dependencies
+    Checked 7 timeperiods
+Checking global event handlers...
+Checking obsessive compulsive processor commands...
+Checking misc settings...
+
+Total Warnings: 0
+Total Errors:   0
+
+Things look okay - No serious problems were detected during the pre-flight check
+RET: 0
+Running configuration check...
+Stopping nagios: done.
+Starting nagios: done.
+```
+Once complete Nagios XI (monitoring configurations) will appear just like it did when it was first installed.
+
+## Final Thoughts
+
+For any support related questions please visit the [Nagios Support Forums](http://support.nagios.com/forum/) at:
+
+[http://support.nagios.com/forum/](http://support.nagios.com/forum/)

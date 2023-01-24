@@ -1,0 +1,65 @@
+---
+title: "Upgrading Nagios Core"
+full: true
+---
+
+# Upgrading Nagios Core
+
+Overview
+
+This KB article explains how to upgrade the version of Nagios Core that runs on your Nagios XI server.
+
+This specifically relates to users that have installed Mod Gearman 2 (MG2) on a Nagios XI 5.5.x server, and now wish to upgrade to Mod Gearman 3 (MG3). Mod Gearman 2 was compatible only with Nagios Core 4.2.4 and below, while Mod Gearman 3 is compatible only with Nagios Core 4.4.3 and above.
+
+## Upgrade
+
+The following steps will upgrade Nagios Core to the latest version, please be aware that the Nagios service is stopped during this procedure and hence there will be no monitoring performed.
+
+You need to stop the nagios service using one of the commands below:
+
+**RHEL 7 \| CentOS 7 \| Oracle Linux 7**
+```
+systemctl stop nagios.service
+systemctl disable nagios.service
+```
+**Debian \| Ubuntu 16/18**
+```
+systemctl stop nagios.service
+systemctl disable nagios.service
+```
+The following steps will upgrade Nagios Core:
+```
+cd /tmp
+rm -rf nagiosxi xi*
+wget https://assets.nagios.com/downloads/nagiosxi/xi-latest.tar.gz
+tar xzf xi-latest.tar.gz
+cd nagiosxi
+./init.sh
+cd subcomponents/nagioscore
+./upgrade
+```
+For Mod Gearman 2 users, keep in mind that newer versions of Nagios Core are incompatible with the old module. This upgrade script will prompt you, asking if you intend to use Mod Gearman 2. If you respond 'yes', Nagios Core will not be upgraded.
+
+In order to upgrade properly, you will need to remove or comment out the broker_module line from nagios.cfg:
+```
+sed -i 's/^broker\(.*\)gearman2\(.*\)/#broker\1gearman2\2/' /usr/local/nagios/etc/nagios.cfg
+```
+Once these steps have completed the Nagios service will will need to be restarted using the commands below:
+
+**RHEL 7 \| CentOS 7 \| Oracle Linux 7  
+**
+```
+systemctl enable nagios.service
+systemctl restart nagios.service
+```
+******Debian \| Ubuntu 16/18****  
+**
+```
+update-rc.d nagios defaults
+systemctl restart nagios.service
+```
+## Final Thoughts
+
+For any support related questions please visit the [Nagios Support Forums](http://support.nagios.com/forum/) at:
+
+[http://support.nagios.com/forum/](http://support.nagios.com/forum/)

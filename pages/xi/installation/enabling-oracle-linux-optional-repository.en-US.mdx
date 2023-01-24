@@ -1,0 +1,27 @@
+---
+title: "Enabling Oracle Linux Optional Repository"
+full: true
+---
+
+# Enabling Oracle Linux Optional Repository
+
+## Problem Description
+
+When you attempt to install or upgrade one of the Nagios products you receive the following error:
+```
+ERROR: Please enable the 'Optional' repo for your system in:
+```
+## Resolving The Problem
+
+You need to add the Optional repository so that Nagios XI can install the necessary prerequisites using the commands below:
+```
+yum install -y yum-utils
+yum-config-manager --enable ol7_optional_latest
+```
+That's it! You should be able to run the installer again and complete your installation.
+
+## Final Thoughts
+
+For any support related questions please visit the [Nagios Support Forums](http://support.nagios.com/forum/) at:
+
+[http://support.nagios.com/forum/](http://support.nagios.com/forum/)

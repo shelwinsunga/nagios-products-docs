@@ -29,7 +29,7 @@ const FEEDBACK_LINK_WITH_TRANSLATIONS = {
 
 export default {
   projectLink: "https://github.com/shelwinsunga/nagios-products-docs",
-  docsRepositoryBase: "https://github.com/vercel/swr-site/blob/master/pages",
+  docsRepositoryBase: "https://github.com/shelwinsunga/nagios-products-docs/tree/main/pages",
   titleSuffix: " – Nagios",
   search: true,
   unstable_flexsearch: true,
@@ -64,109 +64,13 @@ export default {
   },
   footerEditLink: ({ locale }) => {
     switch (locale) {
-      case "zh-CN":
-        return "在 GitHub 上编辑本页 →";
-      case "es-ES":
-        return "Edite esta página en GitHub →";
-      case "pt-BR":
-        return "Edite essa página no GitHub →";
-      case "ja":
-        return "Github で編集する →";
-      case "ko":
-        return "Github에서 이 페이지 편집하기 →";
-      case "ru":
-        return "Редактировать на GitHub →";
       default:
         return "Edit this page on GitHub →";
     }
   },
   footerText: ({ locale }) => {
     switch (locale) {
-      case "zh-CN":
-        return (
-          <a
-            href="https://vercel.com/?utm_source=swr_zh-cn"
-            target="_blank"
-            rel="noopener"
-            className="inline-flex items-center no-underline text-current font-semibold"
-          >
-            <span className="mr-2">由</span>
-            <span className="mr-2">
-              <Vercel />
-            </span>
-            驱动
-          </a>
-        );
-      case "es-ES":
-        return (
-          <a
-            href="https://vercel.com/?utm_source=swr_es-es"
-            target="_blank"
-            rel="noopener"
-            className="inline-flex items-center no-underline text-current font-semibold"
-          >
-            <span className="mr-2">Desarrollado por</span>
-            <span className="mr-2">
-              <Vercel />
-            </span>
-          </a>
-        );
-      case "pt-BR":
-        return (
-          <a
-            href="https://vercel.com/?utm_source=swr_es-es"
-            target="_blank"
-            rel="noopener"
-            className="inline-flex items-center no-underline text-current font-semibold"
-          >
-            <span className="mr-2">Desenvolvido por</span>
-            <span className="mr-2">
-              <Vercel />
-            </span>
-          </a>
-        );
-      case "ja":
-        return (
-          <a
-            href="https://vercel.com/?utm_source=swr_ja"
-            target="_blank"
-            rel="noopener"
-            className="inline-flex items-center no-underline text-current font-semibold"
-          >
-            <span className="mr-2">提供</span>
-            <span className="mr-2">
-              <Vercel />
-            </span>
-          </a>
-        );
-      case "ko":
-        return (
-          <a
-            href="https://vercel.com/?utm_source=swr_ko"
-            target="_blank"
-            rel="noopener"
-            className="inline-flex items-center no-underline text-current font-semibold"
-          >
-            <span className="mr-2">Powered by</span>
-            <span className="mr-2">
-              <Vercel />
-            </span>
-          </a>
-        );
-      case "ru":
-        return (
-          <a
-            href="https://vercel.com/?utm_source=swr_ru"
-            target="_blank"
-            rel="noopener"
-            className="inline-flex items-center no-underline text-current font-semibold"
-          >
-            <span className="mr-2">Работает на</span>
-            <span className="mr-2">
-              <Vercel />
-            </span>
-          </a>
-        );
+    
       default:
         return (
           <span className="mr-1">Initiated by Shelwin</span>

@@ -1,0 +1,35 @@
+---
+title: "Hardware Requirements"
+full: true
+---
+
+# Hardware Requirements
+
+## Overview
+
+This document is intended to provide general guidelines on the hardware requirements needed to run Nagios XI. As each IT infrastructure differs, the hardware requirements for monitoring can vary. For example, the guidelines below assume that you are running active checks. If you are utilizing a large number of passive checks, the requirements are less than the guidelines below.
+
+## Requirements
+
+The table below provides hardware recommendations based on a node (host) to service ratio of 1:5.
+
+|                             |                        |                      |               |              |
+|:---------------------------:|:----------------------:|:--------------------:|:-------------:|:------------:|
+| **Monitored Nodes / Hosts** | **Monitored Services** | **Hard Drive Space** | **CPU Cores** |   **RAM**    |
+|           **50**            |        **250**         |      **40 GB**       |   **1 - 2**   | **1 - 4 GB** |
+|           **100**           |        **500**         |      **80 GB**       |   **2 - 4**   | **4 - 8 GB** |
+|         **\> 500**          |      **\> 2500**       |      **120 GB**      |   **\> 4**    | **\> 8 GB**  |
+
+## Performance Enhancements
+
+There are a number of modifications that you can make to Nagios XI in order to increase performance, and therefore increase the number of nodes and services you can monitor with less hardware. These include:
+
+- Offloading the MySQL database to a remote server
+- Using a ramdisk
+- Enabling rrdcache
+
+## Final Thoughts
+
+For any support related questions please visit the [Nagios Support Forums](http://support.nagios.com/forum/) at:
+
+[http://support.nagios.com/forum/](http://support.nagios.com/forum/)

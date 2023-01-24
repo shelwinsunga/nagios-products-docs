@@ -1,0 +1,73 @@
+---
+title: "Downgrading Nagios Core"
+full: true
+---
+
+# Downgrading Nagios Core
+
+## 
+
+## Overview
+
+This KB article explains how to downgrade the version of Nagios Core that runs on your Nagios XI server.
+
+Specifically this relates to the Nagios XI 5.5.x release that comes with Nagios Core 4.4.x. Currently Nagios Core 4.4.x is not compatible with Mod Gearman (MG), to allow Nagios XI 5.5.x to run MG the version of Nagios Core needs to be downgraded to 4.2.4.
+
+## Downgrade
+
+The following steps will downgrade Nagios Core to 4.2.4, please be aware that the Nagios service is stopped during this procedure and hence there will be no monitoring performed.
+
+You need to stop the nagios service using one of the commands below:
+
+****RHEL 7 \| CentOS 7 \| Oracle Linux 7****
+```
+systemctl stop nagios.service
+systemctl disable nagios.service
+rm -f /usr/lib/systemd/system/nagios.service
+systemctl daemon-reload
+```
+****Debian \| Ubuntu 16/18****
+```
+systemctl stop nagios.service
+systemctl disable nagios.service
+rm -f /lib/systemd/system/nagios.service
+systemctl daemon-reload
+```
+The following steps will downgrade Nagios Core:
+```
+sed -i 's/^lock_file=.*/lock_file=\/usr\/local\/nagios\/var\/nagios.lock/g' /usr/local/nagios/etc/nagios.cfg
+cd /tmp
+rm -rf nagiosxi xi*
+wget https://assets.nagios.com/downloads/nagiosxi/5/xi-5.4.13.tar.gz
+tar xzf xi-5.4.13.tar.gz
+cd nagiosxi
+./init.sh
+cd subcomponents/nagioscore
+./upgrade
+chmod +x /etc/init.d/nagios
+```
+Now the lock file locations need updating:
+```
+sed -i 's/^lock_file=.*/lock_file=\/var\/run\/nagios.lock/g' /usr/local/nagios/etc/nagios.cfg
+sed -i 's/^NagiosRunFile=.*/NagiosRunFile=\/var\/run\/nagios.lock/g' /etc/init.d/nagios
+sed -i 's/^# pidfile.*/# pidfile: \/var\/run\/nagios.lock/g' /etc/init.d/nagios
+```
+Once these steps have completed the Nagios service will will need to be restarted using the commands below:
+
+****RHEL 7 \| CentOS 7 \| Oracle Linux 7  
+****
+```
+systemctl enable nagios.service
+systemctl restart nagios.service
+```
+********Debian \| Ubuntu 16/18****  
+****
+```
+update-rc.d nagios defaults
+systemctl restart nagios.service
+```
+## Final Thoughts
+
+For any support related questions please visit the [Nagios Support Forums](http://support.nagios.com/forum/) at:
+
+[http://support.nagios.com/forum/](http://support.nagios.com/forum/)
