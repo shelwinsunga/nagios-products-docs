@@ -1,0 +1,197 @@
+---
+title: "Understanding retention.dat and modified_attributes"
+full: true
+---
+
+# Understanding retention.dat and modified_attributes
+
+## 
+
+## Overview
+
+This KB article explains the purpose of the retention.dat file and how to modify it when required.
+
+This is an advanced topic and care should be taken.
+
+  
+
+## State Retention File
+
+This is the file that Nagios will use for storing status, downtime, and comment information before it shuts down. When Nagios is restarted it will use the information stored in this file for setting the initial states of services and hosts before it starts monitoring anything.
+
+In your nagios.cfg file this will be defined as follows:
+```
+state_retention_file=/usr/local/nagios/var/retention.dat
+```
+## Modifying retention.dat
+
+When nagios is stopped, you can actually go in and edit attributes in the retention.dat file. Then when Nagios starts again it will include these changes you have made.
+
+However ...
+
+You also have to define the modified_attributes= directive so Nagios knows which entries in the retention.dat file will override the settings in the configuration files. This might seem overly complicated however this is normally controlled by the Nagios process, manually modifying the retention.dat is not commonly done.
+
+### modified_attributes=
+
+Here is a list of the available modified attributes (taken from source code [common.h](https://github.com/NagiosEnterprises/nagioscore/blob/master/include/common.h) ):
+
+|                            |           |
+|----------------------------|-----------|
+| **Attribute**              | **Value** |
+| NONE                       | 0         |
+| NOTIFICATIONS ENABLED      | 1         |
+| ACTIVE CHECKS ENABLED      | 2         |
+| PASSIVE CHECKS ENABLED     | 4         |
+| EVENT HANDLER ENABLED      | 8         |
+| FLAP DETECTION ENABLED     | 16        |
+| FAILURE PREDICTION ENABLED | 32        |
+| PERFORMANCE DATA ENABLED   | 64        |
+| OBSESSIVE HANDLER ENABLED  | 128       |
+| EVENT HANDLER COMMAND      | 256       |
+| CHECK COMMAND              | 512       |
+| NORMAL CHECK INTERVAL      | 1024      |
+| RETRY CHECK INTERVAL       | 2048      |
+| MAX CHECK ATTEMPTS         | 4096      |
+| FRESHNESS CHECKS ENABLED   | 8192      |
+| CHECK TIMEPERIOD           | 16384     |
+| CUSTOM VARIABLE            | 32768     |
+| NOTIFICATION TIMEPERIOD    | 65536     |
+
+If you want to use multiple options you simply need to add the values together.
+
+### Example 1
+
+You want to disable flap detection on a host. Looking at the table above, that has the value of **16** . The two lines that require changing are:
+```
+modified_attributes=16
+flap_detection_enabled=0
+```
+The modified host object in retention.dat would look like this:
+```
+host {
+host_name=test_host
+modified_attributes=16
+check_command=check-host-alive!!!!!!!!
+check_period=24x7
+notification_period=24x7
+event_handler=
+has_been_checked=1
+check_execution_time=4.004
+check_latency=0.000
+check_type=0
+current_state=0
+last_state=0
+last_hard_state=0
+last_event_id=0
+current_event_id=0
+current_problem_id=0
+last_problem_id=0
+plugin_output=PING OK - Packet loss = 0%, RTA = 0.05 ms
+long_plugin_output=
+performance_data=rta=0.047000ms;3000.000000;5000.000000;0.000000 pl=0%;80;100;0
+last_check=1468566875
+next_check=1468567179
+check_options=0
+current_attempt=1
+max_attempts=5
+normal_check_interval=5.000000
+retry_check_interval=5.000000
+state_type=1
+last_state_change=1446704088
+last_hard_state_change=1446704088
+last_time_up=1468566879
+last_time_down=0
+last_time_unreachable=0
+notified_on_down=0
+notified_on_unreachable=0
+last_notification=0
+current_notification_number=0
+current_notification_id=0
+notifications_enabled=1
+problem_has_been_acknowledged=0
+acknowledgement_type=0
+active_checks_enabled=1
+passive_checks_enabled=1
+event_handler_enabled=1
+flap_detection_enabled=0
+process_performance_data=1
+obsess=1
+is_flapping=0
+percent_state_change=0.00
+check_flapping_recovery_notification=0
+state_history=0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+}
+```
+### Example 2
+
+You want to disable active checks AND disable notifications on a host . Looking at the table above, the total of those two options has a value of **3** . The three lines that require changing are:
+```
+modified_attributes=3
+notifications_enabled=0
+active_checks_enabled=0
+```
+The modified host object in retention.dat would look like this:
+```
+host {
+host_name=test_host
+modified_attributes=3
+check_command=check-host-alive!!!!!!!!
+check_period=24x7
+notification_period=24x7
+event_handler=
+has_been_checked=1
+check_execution_time=4.004
+check_latency=0.000
+check_type=0
+current_state=0
+last_state=0
+last_hard_state=0
+last_event_id=0
+current_event_id=0
+current_problem_id=0
+last_problem_id=0
+plugin_output=PING OK - Packet loss = 0%, RTA = 0.05 ms
+long_plugin_output=
+performance_data=rta=0.047000ms;3000.000000;5000.000000;0.000000 pl=0%;80;100;0
+last_check=1468566875
+next_check=1468567179
+check_options=0
+current_attempt=1
+max_attempts=5
+normal_check_interval=5.000000
+retry_check_interval=5.000000
+state_type=1
+last_state_change=1446704088
+last_hard_state_change=1446704088
+last_time_up=1468566879
+last_time_down=0
+last_time_unreachable=0
+notified_on_down=0
+notified_on_unreachable=0
+last_notification=0
+current_notification_number=0
+current_notification_id=0
+notifications_enabled=0
+problem_has_been_acknowledged=0
+acknowledgement_type=0
+active_checks_enabled=0
+passive_checks_enabled=1
+event_handler_enabled=1
+flap_detection_enabled=1
+process_performance_data=1
+obsess=1
+is_flapping=0
+percent_state_change=0.00
+check_flapping_recovery_notification=0
+state_history=0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+}
+```
+## Important
+
+Any changes you make to retention.dat need to be done when Nagios is stopped, otherwise they will be overridden by the Nagios process when it is instructed to stop.
+
+## Final Thoughts
+
+For any support related questions please visit the [Nagios Support Forums](http://support.nagios.com/forum/) at:
+
+[http://support.nagios.com/forum/](http://support.nagios.com/forum/)

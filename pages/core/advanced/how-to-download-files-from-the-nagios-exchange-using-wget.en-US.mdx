@@ -1,0 +1,82 @@
+---
+title: "How To Download Files From The Nagios Exchange Using WGET"
+full: true
+---
+
+# How To Download Files From The Nagios Exchange Using WGET
+
+## 
+
+## Overview
+
+This KB article shows you how to download a file directly from the Nagios Exchange to your Linux server using the WGET command.
+
+This can be handy when you require an additional plugin on your Nagios server or an NRPE client.
+
+## Download File
+
+In this example we want to download the plugin check_doomsday.php which is located here:
+
+[Doomsday Check](https://exchange.nagios.org/directory/Plugins/Others/Doomsday-Check/details "Doomsday Check")
+
+The actual URL for the plugin is:
+
+https://exchange.nagios.org/components/com_mtree/attachment.php?link_id=2862&cf_id=24
+
+As you can see from the URL it doesn't actually include the name of the plugin check_doomsday.php and if you tried to download using wget you would end up with a file named attachment.php?link_id=2862 and it would be empty ... not what you are after.
+
+This is because there is some special http redirecting going on with the Nagios Exchange web server, so instead you would download the file as follows.
+
+First you'll change in the directory you want the file to be downloaded to:
+```
+cd /usr/local/nagios/libexec/
+```
+Downloaded the file using this command:
+```
+wget "https://exchange.nagios.org/components/com_mtree/attachment.php?link_id=2862&cf_id=24" -O check_doomsday.php
+```
+Which will produce something like this:
+```
+--2016-08-02 16:53:19--  https://exchange.nagios.org/components/com_mtree/attachment.php?link_id=2862&cf_id=24
+Resolving exchange.nagios.org... 66.228.58.94, 2600:3c02::f03c:91ff:fedf:d653
+Connecting to exchange.nagios.org|66.228.58.94|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 5307 (5.2K) [application/octet-stream]
+Saving to: “check_doomsday.php”
+
+100%[=====================================================================>] 5,307       --.-K/s   in 0.003s  
+
+2016-08-02 16:53:21 (1.59 MB/s) - “check_doomsday.php” saved [5307/5307]
+```
+The important parts of this command:
+
+- The entire URL is enclosed in " double quotes "
+
+- Use the argument -O filename to redirect the output to a file
+
+  - That's an upper case "oh", not a zero
+
+You should set the appropriate ownership and permissions as well:
+```
+chown nagios:nagios check_doomsday.php
+chmod 0755 check_doomsday.php
+```
+Now you're all set to run the plugin:
+```
+php /usr/local/nagios/libexec/check_doomsday.php
+```
+Which will produce:
+```
+Dec 21, 2012 passed and things are still okay. Whew!
+```
+What a relief!
+
+## Special Thanks
+
+This KB article would not have been possible without a suggestion from Sean Falzon and additional technical support from Eric Loyd. Both of them are always looking to help make Nagios administration easier.
+
+## Final Thoughts
+
+For any support related questions please visit the [Nagios Support Forums](http://support.nagios.com/forum/) at:
+
+[http://support.nagios.com/forum/](http://support.nagios.com/forum/)
