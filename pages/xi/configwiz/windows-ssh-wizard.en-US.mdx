@@ -1,0 +1,51 @@
+---
+title: "Windows SSH"
+full: true
+---
+
+## Windows SSH
+
+**Windows SSH** is a configuration wizard in Nagios XI that is meant to be a replacement for the deprecated WMI wizard. It's designed to monitor a Windows machine remotely, meaning that you don't need to install any scripts or plugins on the remote.
+
+### Setup
+
+We're going to need to set up SSH such that we can connect to the remote machine without a password. You need to have Nagios XI installed.
+
+- From your Nagios XI system, make sure you're a nagios user by casting `su nagios` onto the terminal.
+
+- Now we need to generate an SSH key. I don't really care what key you use, but for the purposes of this tutorial I'm using an `ed25519` key. They're short, like me (5'6).
+
+  - `ssh-keygen -t ed25519`
+
+Trust the computer, say yes to the prompts. It should save a key in somewhere like `/home/nagios/.ssh/`
+
+Now switch to your Windows machine. This is the hard part, or at least it was for me. I'll try to make it easy for you.
+
+- Open up powershell as an administrator. We need to install OpenSSH, so just trust me and run this:
+  - `Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0`
+  - `Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0`
+
+We can see if it's installed by running `Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH*'`.
+
+You should get output like this:
+
+```
+    Name  : OpenSSH.Client~~~~0.0.1.0
+    State : Installed
+
+    Name  : OpenSSH.Server~~~~0.0.1.0
+    State : Installed
+```
+
+- You're going to trust me again and run this:
+
+```powershell
+if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyContinue | Select-Object Name, Enabled)) {
+    Write-Output "Firewall Rule 'OpenSSH-Server-In-TCP' does not exist, creating it..."
+    New-NetFirewallRule -Name 'OpenSSH-Server-In-TCP' -DisplayName 'OpenSSH Server (sshd)' -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22
+} else {
+    Write-Output "Firewall rule 'OpenSSH-Server-In-TCP' has been created and exists."
+}
+```
+
+Great, OpenSSH is working. The next step is pretty
