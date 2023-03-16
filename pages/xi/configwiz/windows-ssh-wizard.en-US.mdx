@@ -9,7 +9,7 @@ full: true
 
 ### Setup
 
-We're going to need to set up SSH such that we can connect to the remote machine without a password. You need to have Nagios XI installed.
+We're going to need to set up SSH such that we can connect to the remote machine without a password (you can skip this step if you already have a Windows machine you can passwordlessly SSH into). You need to have Nagios XI installed and a Windows machine to monitor.
 
 - From your Nagios XI system, make sure you're a nagios user by casting `su nagios` onto the terminal.
 
@@ -37,15 +37,58 @@ You should get output like this:
     State : Installed
 ```
 
-- You're going to trust me again and run this:
+You're going to trust me again and run this:
 
 ```powershell
+Restart-Service sshd
+
+# Sets the service to start automatically
+Set-Service -Name sshd -StartupType 'Automatic'
+
+# Creates a firewall exception for OpenSSH
 if (!(Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -ErrorAction SilentlyContinue | Select-Object Name, Enabled)) {
     Write-Output "Firewall Rule 'OpenSSH-Server-In-TCP' does not exist, creating it..."
     New-NetFirewallRule -Name 'OpenSSH-Server-In-TCP' -DisplayName 'OpenSSH Server (sshd)' -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22
 } else {
     Write-Output "Firewall rule 'OpenSSH-Server-In-TCP' has been created and exists."
 }
+
+# Makes Powershell the default shell
+New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -PropertyType String -Force
+
 ```
 
-Great, OpenSSH is working. The next step is pretty
+Create the `C:\ProgramData\ssh\administrators_authorized_keys` file
+
+- `New-Item -Path "C:\ProgramData\ssh\administrators_authorized_keys" -ItemType File`
+
+Open the file in notepad
+
+- `notepad C:\ProgramData\ssh\administrators_authorized_keys`
+
+Go back into your Nagios XI machine and copy the SSH key you generated
+
+- `cat /home/nagios/.ssh/id_ed25519.pub` to see it in the terminal
+  Somehow, someway, get it into the `administrators_authorized_keys` file on the Windows machine
+
+After saving the file, open it up in file explorer and make sure it's not a `.txt` file. If it is, go to **Views** &rarr; **Options** &rarr; and find the **Hide extensions for known file types** option. Make it so that you can see the extension and rename it to `administrators_authorized_keys` (no .txt).
+
+Now, in the file explorer, right click on `administrators_authorized_keys` and click **Properties** &rarr; **Security** &rarr; **Advanced** &rarr; **Disable Inheritance** &rarr; **Remove all inherited permissions from this object**.
+
+After that, click **Add** in the same menu and you should see **Select a principal**, which, you guessed it, you should click. The object name you need to input is the username of the Windows user. If you don't know it, go to **Task manager** &rarr; **Users** and you should see it there.
+
+After adding the user, check all the permission boxes (except for **Special**). Click **OK** and then **Apply**.
+
+Now, go back to the terminal on your Nagios XI machine and try to SSH into the Windows machine. It should ask you for a fingerprint at first. If everything is in order, you can now passwordlessly SSH into the Windows machine.
+
+### Getting the Windows SSH wizard
+
+On the Nagios XI system, open the terminal and do a `git clone git@git.nagios.com:ssunga/windows-ssh.git`.
+
+Zip the file with `zip -r windows-ssh.zip windows-ssh "*.git*"`
+
+Now, on the XI user interface, go to **Admin** &rarr; **System Extensions** &rarr; **Config Wizards** &rarr;.
+
+Upload the zip file and install it. You should see a new wizard called **Windows SSH**.
+
+You're all good to go!
